@@ -15,22 +15,44 @@ const io = socketIo(expressServer, {
     }
 })
 
-io.on('connection', (socket) => {
-    console.log(socket.id, 'has joined our server!')
+// Track connected users: socketId -> name
+const connectedUsers = new Map()
 
-    // Broadcast updated client count to everyone
+io.on('connection', (socket) => {
+    console.log(socket.id, 'has connected')
+
     io.emit('clients-total', io.engine.clientsCount)
 
+    // ── Client announces their name on join ───────────────────────────────────
+    socket.on('join', (name) => {
+        const displayName = (name || 'Anonymous').trim()
+        connectedUsers.set(socket.id, displayName)
+        console.log(`${displayName} (${socket.id}) joined`)
+        // Notify everyone else
+        socket.broadcast.emit('user-joined', displayName)
+    })
+
+    // ── Client updates their display name ─────────────────────────────────────
+    socket.on('name-change', (name) => {
+        connectedUsers.set(socket.id, (name || 'Anonymous').trim())
+    })
+
+    // ── Disconnect: broadcast leave notification ───────────────────────────────
     socket.on('disconnect', () => {
-        console.log(socket.id, 'has left the server')
+        const name = connectedUsers.get(socket.id) || 'Someone'
+        connectedUsers.delete(socket.id)
+        console.log(`${name} (${socket.id}) disconnected`)
         socket.broadcast.emit('stop-typing', socket.id)
+        socket.broadcast.emit('user-left', name)
         io.emit('clients-total', io.engine.clientsCount)
     })
 
+    // ── Messages ───────────────────────────────────────────────────────────────
     socket.on('message', (data) => {
-        // data = { name: string, message: string }
-        console.log('message from client', data)
+        const msgId = `${socket.id}-${Date.now()}`
+        console.log('message from', connectedUsers.get(socket.id) || socket.id, ':', data.message)
         io.emit('chat-message', {
+            id: msgId,
             name: data.name,
             text: data.message,
             senderId: socket.id,
@@ -38,9 +60,14 @@ io.on('connection', (socket) => {
         })
     })
 
-    // ── Typing indicator ──────────────────────────────────────────────────────
+    // ── Read receipts: relay to the original sender ────────────────────────────
+    socket.on('message-read', ({ msgId, senderId }) => {
+        // Tell only the sender their message was read
+        io.to(senderId).emit('message-read', msgId)
+    })
+
+    // ── Typing indicator ───────────────────────────────────────────────────────
     socket.on('typing', (name) => {
-        // Broadcast to everyone except the sender
         socket.broadcast.emit('typing', { id: socket.id, name })
     })
 
