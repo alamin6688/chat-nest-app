@@ -3,7 +3,10 @@ const app = express()
 
 app.use(express.static("public"))
 
-const expressServer = app.listen(4000)
+const PORT = process.env.PORT || 4000
+const expressServer = app.listen(PORT, () => {
+    console.log(`ChatNest Server started on port ${PORT}`)
+})
 
 const socketIo = require('socket.io')
 
