@@ -1,73 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
-      integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
-      crossorigin="anonymous"
-    />
+    <meta name="description" content="ChatNest – real-time chat powered by Socket.IO" />
+    <title>ChatNest 💬</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" />
+
     <link rel="stylesheet" href="style.css" />
-    <title>Chat app</title>
-  </head>
-  <body>
-    <h1 class="title">Chat Nest💬</h1>
-    <div class="main">
-      <div class="name">
-        <span><i class="far fa-user"></i></span>
-        <input
-          type="text"
-          id="name-input"
-          class="name-input"
-          value="anonymous"
-          maxlength="20"
-        />
-      </div>
+</head>
 
-      <ul class="message-container" id="message-container">
-        <!-- These li elements are only for reference, and therefore, they are commented out... -->
-        <!-- <li class="message-left">
-          <p class="message">
-            lorem impsun
-            <span>bluebird ● 26 July 10:40</span>
-          </p>
-        </li>
+<body>
 
-        <li class="message-right">
-          <p class="message">
-            lorem impsun
-            <span>bluebird ● 26 July 10:40</span>
-          </p>
-        </li>
+    <!-- Animated background blobs -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
 
-        <li class="message-feedback">
-          <p class="feedback" id="feedback">✍️ killer is typing a message...</p>
-        </li> -->
-      </ul>
+    <!-- Chat Card -->
+    <div class="chat-card">
 
-      <form class="message-form" id="message-form">
-        <input
-          type="text"
-          name="message"
-          id="message-input"
-          class="message-input"
-        />
-        <div class="v-divider"></div>
-        <button type="submit" class="send-button">
-          Send <span><i class="fas fa-paper-plane"></i></span>
-        </button>
-      </form>
-    </div>
-    <h3 class="clients-total" id="client-total">Total clients: 2</h3>
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <div class="app-avatar">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <div class="app-info">
+                    <h1 class="app-title">ChatNest</h1>
+                    <span class="app-status"><span class="status-dot"></span>Live</span>
+                </div>
+            </div>
+            <div class="chat-header-right">
+                <div class="clients-pill" id="client-total">
+                    <i class="fa-solid fa-users"></i>
+                    <span>–</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- User identity bar -->
+        <div class="identity-bar">
+            <div class="identity-icon"><i class="fa-solid fa-user-pen"></i></div>
+            <input type="text" id="name-input" class="name-input" value="Anonymous" maxlength="20"
+                placeholder="Your name…" autocomplete="off" />
+            <span class="identity-hint">Chatting as</span>
+        </div>
+
+        <!-- Messages -->
+        <ul class="message-container" id="message-container">
+            <li class="welcome-msg">
+                <i class="fa-solid fa-lock-open"></i>
+                <span>This is the beginning of the chat. Say hi! 👋</span>
+            </li>
+        </ul>
+
+        <!-- Typing indicator (lives outside scroll area so it always shows) -->
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="typing-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <span id="typing-text" class="typing-text"></span>
+        </div>
+
+        <!-- Input form -->
+        <form class="message-form" id="message-form" autocomplete="off">
+            <input type="text" name="message" id="message-input" class="message-input" placeholder="Type a message…"
+                autocomplete="off" />
+            <button type="submit" class="send-button" id="send-btn" aria-label="Send">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </form>
+
+    </div><!-- /chat-card -->
 
     <script src="/socket.io/socket.io.js"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.28.0/moment.min.js"
-      integrity="sha512-Q1f3TS3vSt1jQ8AwP2OuenztnLU6LwxgyyYOG1jgMW/cbEMHps/3wjvnl1P3WTrF3chJUWEoxDUEjMxDV8pujg=="
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"
+        crossorigin="anonymous"></script>
     <script src="main.js"></script>
-  </body>
+</body>
+
 </html>

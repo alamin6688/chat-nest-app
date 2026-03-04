@@ -23,6 +23,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log(socket.id, 'has left the server')
+        socket.broadcast.emit('stop-typing', socket.id)
         io.emit('clients-total', io.engine.clientsCount)
     })
 
@@ -32,7 +33,18 @@ io.on('connection', (socket) => {
         io.emit('chat-message', {
             name: data.name,
             text: data.message,
-            senderId: socket.id
+            senderId: socket.id,
+            dateTime: new Date()
         })
+    })
+
+    // ── Typing indicator ──────────────────────────────────────────────────────
+    socket.on('typing', (name) => {
+        // Broadcast to everyone except the sender
+        socket.broadcast.emit('typing', { id: socket.id, name })
+    })
+
+    socket.on('stop-typing', () => {
+        socket.broadcast.emit('stop-typing', socket.id)
     })
 })
