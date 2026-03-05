@@ -12,7 +12,7 @@ const socketIo = require('socket.io')
 
 const io = socketIo(expressServer, {
     cors: {
-        origin: "*",
+        origin: ["https://chat-nest-app.onrender.com", "http://localhost:4000"],
         methods: ["GET", "POST"],
         credentials: true
     }
